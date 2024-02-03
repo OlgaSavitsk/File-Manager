@@ -6,7 +6,7 @@ export class BaseControlService {
   async init(command, fn) {
     if (!this.ctx.command) return;
     try {
-      if (this.ctx.command === command) {
+      if (this.ctx.command === command || this.ctx.path === command) {
         await fn(this.ctx);
       }
     } catch (err) {
