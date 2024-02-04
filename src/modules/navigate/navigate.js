@@ -1,11 +1,18 @@
-import { readdir } from "fs/promises";
+import { readdir, stat } from "fs/promises";
 import path from "path";
 import { chdir } from "process";
+import { ERROR_MESSAGE } from "../../constants/index.js";
 
 async function cd(ctx) {
   const pathToDir = path.resolve(ctx.currentDir, ctx.path);
-  chdir(pathToDir);
-  return (ctx.currentDir = pathToDir);
+  try {
+    if ((await stat(pathToDir)).isDirectory()) {
+      chdir(pathToDir);
+      return (ctx.currentDir = pathToDir);
+    }
+  } catch {
+    console.error(ERROR_MESSAGE);
+  }
 }
 
 async function up(ctx) {
@@ -20,27 +27,19 @@ async function ls(ctx) {
       .sort((a, b) => {
         return a.isFile() - b.isFile();
       })
+      .filter(dir => !dir.isSymbolicLink())
       .map((file) => ({
         Name: file.name,
         Type: file.isDirectory() ? "directory" : "file",
-      }));
+      }))
     console.table(outputList);
   } catch {
-    throw new Error("Operation failed");
+    console.error(ERROR_MESSAGE);
   }
 }
 
 export default (baseControl) => {
-  baseControl.init("cd", cd);
-  baseControl.init("ls", ls);
-  baseControl.init("up", up);
+  baseControl.use("cd", cd);
+  baseControl.use("ls", ls);
+  baseControl.use("up", up);
 };
-
-// try {
-//   if ((await stat(pathToDir)).isDirectory()) {
-//     await chdir(pathToDir);
-//     return ctx.currentDir = pathToDir;
-//   } else throw new Error("Operation failed");
-// } catch(err) {
-//   throw new Error(err);
-// }

@@ -1,10 +1,7 @@
-import parseArgs from "./services/greeting/greeting.helper.js";
-
 export class App {
   constructor(option) {
     this.context = Object.create({});
     this.context.currentDir = option.cwd();
-    this.context.userName = parseArgs(option.process) ?? "USERNAME";
     this.middleware = [];
     this.platform = option.platform;
   }
@@ -25,14 +22,13 @@ export class App {
     });
   }
 
-
-  handleInput = (line) => {
-    const input = line.trim().split(" ");
-    if (!line.trim()) return;
-    const [command, ...args] = input;
+  handleInput = async (line) => {
+    const input = line.trim();
+    if (!input) return;
+    const [command, ...args] = input.split(" ");
     this.context.command = command;
     this.context.path = args.join(" ").trim();
     this.callback();
-    return { command, args }, this.context;
+    return command;
   };
 }

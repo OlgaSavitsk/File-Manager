@@ -5,7 +5,7 @@ import { homedir } from "os";
 import { cwd } from "process";
 
 const init = () => {
-  const app = new App({ process, cwd });
+  const app = new App({ cwd });
   routes(app);
   return app;
 };
@@ -13,8 +13,8 @@ const init = () => {
 const app = init();
 
 (() => {
+  readlineService(process, app);
   app.callback();
-  readlineService(process, app.handleInput);
 })();
 
 export default app;

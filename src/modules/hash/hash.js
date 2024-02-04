@@ -2,19 +2,22 @@ import { createReadStream } from "fs";
 import { createHash } from "crypto";
 import { pipeline } from "stream/promises";
 import path from "path";
+import { ERROR_MESSAGE } from "../../constants/index.js";
 
 async function hash(ctx) {
   try {
+    const hex = createHash("sha256");
     const pathToFile = path.resolve(ctx.currentDir, ctx.path);
     const readableStream = createReadStream(pathToFile);
-    const hex = createHash("sha256");
-    readableStream.on("data", (chunk) => hex.update(chunk));
-    await pipeline(readableStream, hex.digest("hex"), process.stdout);
+    await pipeline(readableStream, hex, {
+      end: false,
+    });
+    console.log(hex.digest("hex"))
   } catch {
-    throw new Error("Operation failed");
+    console.error(ERROR_MESSAGE);
   }
 }
 
 export default (baseControl) => {
-  baseControl.init("hash", hash);
+  baseControl.use("hash", hash);
 };

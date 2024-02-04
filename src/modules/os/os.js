@@ -1,5 +1,9 @@
 import { EOL, arch, cpus, homedir, userInfo } from "os";
 
+function os(ctx) {
+  console.log(`CPU architecture: ${arch()}`);
+}
+
 function eol() {
   console.log(`EOL: ${JSON.stringify(EOL)}`);
 }
@@ -26,9 +30,10 @@ function architecture() {
 }
 
 export default (baseControl) => {
-  baseControl.init("--EOL", eol);
-  baseControl.init("--cpus", cpusInfo);
-  baseControl.init("--homedir", homeDir);
-  baseControl.init("--username", usernameInfo);
-  baseControl.init("--architecture", architecture);
+  baseControl.use("os", os);
+  baseControl.use("--EOL", eol);
+  baseControl.use("--cpus", cpusInfo);
+  baseControl.use("--homedir", homeDir);
+  baseControl.use("--username", usernameInfo);
+  baseControl.use("--architecture", architecture);
 };
