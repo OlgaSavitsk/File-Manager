@@ -1,7 +1,7 @@
 export class App {
   constructor(option) {
     this.context = Object.create({});
-    this.context.currentDir = option.cwd();
+    this.context.currentDir = option.homedir();
     this.middleware = [];
     this.platform = option.platform;
   }

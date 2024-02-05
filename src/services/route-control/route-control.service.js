@@ -1,5 +1,6 @@
 import { ERROR_MESSAGE, INVALID_INPUT_MESSAGE } from "../../constants/index.js";
 import { setCurrentDir } from "../index.js";
+import getParam from "./route-control.helper.js";
 
 export class RouteControlService {
   constructor(ctx) {
@@ -19,9 +20,7 @@ export class RouteControlService {
 
   async init() {
     if (!this.ctx.command) return;
-    const param = this.ctx.path.startsWith("--")
-      ? this.ctx.path
-      : this.ctx.command;
+    const param = getParam(this.ctx)
     const fn = this.middleware.get(param);
     try {
       if (fn) await fn(this.ctx);

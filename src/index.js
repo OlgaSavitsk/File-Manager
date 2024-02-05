@@ -2,10 +2,9 @@ import { readlineService } from "./services/index.js";
 import { App } from "./app.js";
 import routes from "./routes/index.js";
 import { homedir } from "os";
-import { cwd } from "process";
 
 const init = () => {
-  const app = new App({ cwd });
+  const app = new App({ homedir });
   routes(app);
   return app;
 };

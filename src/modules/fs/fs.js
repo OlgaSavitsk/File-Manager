@@ -1,7 +1,8 @@
-import { createReadStream, createWriteStream } from "fs";
 import { writeFile, rename as renameFile, unlink, stat } from "fs/promises";
+import { createReadStream, createWriteStream } from "fs";
 import { pipeline } from "stream/promises";
 import path, { dirname } from "path";
+
 import { ERROR_MESSAGE } from "../../constants/index.js";
 
 async function read(ctx) {
@@ -26,11 +27,13 @@ async function create(ctx) {
 async function rename(ctx) {
   const [sourceFile, newFile] = ctx.path.trim().split(" ");
   const sourceFilePath = path.resolve(ctx.currentDir, sourceFile);
-  if (!(await stat(sourceFilePath)).isFile()) console.error(ERROR_MESSAGE);
   const targetFolderPath = dirname(sourceFilePath);
   const pathToNewFile = path.resolve(targetFolderPath, newFile);
   try {
-    await renameFile(sourceFilePath, pathToNewFile);
+    if ((await stat(sourceFilePath)).isFile()) {
+      return await renameFile(sourceFilePath, pathToNewFile);
+    }
+    throw new Error(ERROR_MESSAGE);
   } catch {
     console.error(ERROR_MESSAGE);
   }
@@ -54,8 +57,8 @@ async function copy(ctx) {
     const readableStream = createReadStream(sourceFilePath);
     const writableStream = createWriteStream(targetFilePath, { flags: "wx" });
     await pipeline(readableStream, writableStream);
-  } catch (err) {
-    console.error(err);
+  } catch {
+    console.error(ERROR_MESSAGE);
   }
 }
 
@@ -63,7 +66,7 @@ async function move(ctx) {
   try {
     await copy(ctx);
     await remove(ctx);
-  } catch (err) {
+  } catch {
     console.error(ERROR_MESSAGE);
   }
 }
@@ -73,8 +76,8 @@ async function remove(ctx) {
   const pathToFile = path.resolve(ctx.currentDir, sourceFile);
   try {
     await unlink(pathToFile);
-  } catch (err) {
-    throw new Error(err);
+  } catch {
+    console.error(ERROR_MESSAGE);
   }
 }
 
