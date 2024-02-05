@@ -1,0 +1,23 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "File Manager using Node.js APIs",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OlgaSavitsk/File-Manager.git"
+  },
+  "keywords": [
+    "node2024"
+  ],
+  "author": "olgaSav",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OlgaSavitsk/File-Manager/issues"
+  },
+  "homepage": "https://github.com/OlgaSavitsk/File-Manager#readme"
+}
